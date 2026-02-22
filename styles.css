@@ -58,6 +58,7 @@ body {
     letter-spacing: 2px;
     background: linear-gradient(135deg, #FFF, var(--color-saints-gold));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: 0 4px 12px rgba(211, 166, 37, 0.2);
     margin-bottom: 0.5rem;
@@ -483,5 +484,31 @@ body {
 
     .modal-title {
         font-size: 1.5rem;
+    }
+
+    .draft-room-layout {
+        flex-direction: column;
+        height: auto;
+        min-height: calc(100vh - 150px);
+    }
+
+    .draft-tracker {
+        width: 100%;
+        height: 250px;
+        order: -1;
+    }
+
+    .draft-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+
+    .draft-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
     }
 }
