@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 NFL Mock Draft Simulator - Saints Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Pre-App Language Selection Modal -->
+        <div id="language-modal" class="modal" style="background-color: var(--color-bg); z-index: 9999; display: flex;">
+            <div class="modal-content glass-effect scale-in" style="transform: scale(1); max-width: 500px;">
+                <h2 class="title" style="margin-bottom: 2rem;">NFL MOCK DRAFT</h2>
+                <h3 class="modal-title" style="margin-bottom: 2rem;">Select Language</h3>
+                <div class="modal-actions" style="justify-content: center; gap: 2rem;">
+                    <button class="btn btn-primary" style="font-size: 1.2rem; padding: 1rem 3rem;"
+                        onclick="setLanguage('en')">English</button>
+                    <button class="btn btn-secondary" style="font-size: 1.2rem; padding: 1rem 3rem;"
+                        onclick="setLanguage('ja')">日本語</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <header class="header">
+            <h1 class="main-title">NFL Mock Draft 2026</h1>
+            <p class="subtitle">Simulator</p>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- Phase 1: Team Selection -->
+            <section id="phase-team-selection" class="phase active">
+                <div class="phase-header">
+                    <h2>Select Your Team</h2>
+                    <p>Choose the franchise you want to manage in the 2026 NFL Draft.</p>
+                    <div class="round-selector" style="margin-top: 1rem;">
+                        <label for="round-select">Draft Length:</label>
+                        <select id="round-select" class="custom-select">
+                            <option value="1" selected>1 Round</option>
+                            <option value="2">2 Rounds</option>
+                            <option value="3">3 Rounds</option>
+                            <option value="4">4 Rounds</option>
+                            <option value="5">5 Rounds</option>
+                            <option value="6">6 Rounds</option>
+                            <option value="7">7 Rounds</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="teams-grid" id="teams-grid">
+                    <!-- Teams will be injected via JS -->
+                </div>
+            </section>
+
+            <!-- Phase 2: Draft Room -->
+            <section id="phase-draft-room" class="phase hidden">
+                <div class="draft-room-layout">
+                    <!-- Left Sidebar Tracker -->
+                    <aside class="draft-tracker" id="draft-tracker">
+                        <h3>Draft Tracker</h3>
+                        <div class="tracker-list" id="tracker-list">
+                            <!-- Picks injected via JS -->
+                        </div>
+                    </aside>
+
+                    <!-- Main Board -->
+                    <div class="draft-board">
+                        <div class="draft-header">
+                            <div class="team-info">
+                                <h2 id="current-team-name">New Orleans Saints</h2>
+                                <span class="pick-info" id="current-pick-info">ON THE CLOCK: Round 1, Pick 8</span>
+                            </div>
+                            <div class="draft-actions">
+                                <button id="btn-trade-up" class="btn btn-secondary hidden" onclick="attemptTradeUp()"
+                                    style="background-color: var(--color-saints-gold); color: black;">Trade Up</button>
+                                <button id="btn-trade-down" class="btn btn-secondary hidden"
+                                    onclick="attemptTradeDown()"
+                                    style="background-color: var(--color-saints-gold); color: black;">Trade
+                                    Down</button>
+                                <button id="btn-pause-resume" class="btn btn-secondary" onclick="togglePause()">Pause
+                                    Simulation</button>
+                                <button id="btn-sim-pick" class="btn btn-primary" onclick="simulatePick()">Simulate
+                                    Pick</button>
+                            </div>
+                        </div>
+
+                        <div class="filters-container"
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                            <div class="filters" id="position-filters" style="margin-bottom: 0;">
+                                <button class="filter-btn active" data-pos="ALL">ALL</button>
+                                <button class="filter-btn" data-pos="QB">QB</button>
+                                <button class="filter-btn" data-pos="RB">RB</button>
+                                <button class="filter-btn" data-pos="WR">WR</button>
+                                <button class="filter-btn" data-pos="TE">TE</button>
+                                <button class="filter-btn" data-pos="OL">OL</button>
+                                <button class="filter-btn" data-pos="EDGE">EDGE</button>
+                                <button class="filter-btn" data-pos="DL">DL</button>
+                                <button class="filter-btn" data-pos="LB">LB</button>
+                                <button class="filter-btn" data-pos="CB">CB</button>
+                                <button class="filter-btn" data-pos="S">S</button>
+                                <button class="filter-btn" data-pos="K">K</button>
+                                <button class="filter-btn" data-pos="P">P</button>
+                            </div>
+                            <div class="search-box">
+                                <input type="text" id="prospect-search" class="custom-select"
+                                    placeholder="Search player name..." style="width: 200px; padding: 0.6rem 1rem;">
+                            </div>
+                        </div>
+
+                        <div class="prospects" id="prospects-list">
+                            <!-- Prospects will be injected via JS -->
+                        </div>
+                        <div id="load-more-container" class="hidden" style="text-align: center; margin: 1.5rem 0;">
+                            <button id="btn-load-more" class="btn btn-secondary"
+                                onclick="loadMoreProspects()">さらに表示する</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Saints Praise Modal (For selecting Saints) -->
+        <div id="saints-modal" class="modal hidden">
+            <div class="modal-content glass-effect scale-in">
+                <h3 class="modal-title success">Welcome to the Saints</h3>
+                <p id="saints-praise-text" class="modal-desc"></p>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="closeSaintsModal()">Who dat!</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Non-Saints Error Modal (For forced Saints selection) -->
+        <div id="non-saints-modal" class="modal hidden">
+            <div class="modal-content glass-effect scale-in">
+                <h3 class="modal-title">Error: Invalid Selection</h3>
+                <p id="non-saints-text" class="modal-desc"></p>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="closeNonSaintsModal()">I Understand</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RB Rejection Modal (For RB selection at Pick 8) -->
+        <div id="rb-modal" class="modal hidden">
+            <div class="modal-content glass-effect scale-in">
+                <h3 class="modal-title warning">Wait A Minute...</h3>
+                <div class="modal-desc long-text" id="rb-text">
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="closeRbModal()">考え直す</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- QB Rejection Modal -->
+        <div id="qb-modal" class="modal hidden">
+            <div class="modal-content glass-effect scale-in">
+                <h3 class="modal-title warning">Are you serious?</h3>
+                <div class="modal-desc long-text">
+                    <p id="qb-text" style="font-size: 1.2rem; line-height: 1.6;"></p>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="closeQbModal()">Tyler Shoughを信じる</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- OT Rejection Modal -->
+        <div id="ot-modal" class="modal hidden">
+            <div class="modal-content glass-effect scale-in">
+                <h3 class="modal-title warning">Too Many Tackles!</h3>
+                <div class="modal-desc long-text">
+                    <p id="ot-text" style="font-size: 1.1rem; line-height: 1.6;"></p>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="closeOtModal()">考え直す</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- P/K Rejection Modal -->
+        <div id="pk-modal" class="modal hidden">
+            <div class="modal-content glass-effect scale-in">
+                <h3 class="modal-title warning">Bad Positional Value</h3>
+                <div class="modal-desc long-text" id="pk-text">
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="closePkModal()">考え直す</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Start Draft Modal -->
+        <div id="start-modal" class="modal hidden">
+            <div class="modal-content glass-effect scale-in" style="text-align: center;">
+                <h3 class="modal-title">Ready for the Draft?</h3>
+                <p id="start-text" class="modal-desc" style="margin-bottom: 2rem;"></p>
+                <div class="modal-actions" style="justify-content: center;">
+                    <button class="btn btn-primary" style="font-size: 1.2rem; padding: 1rem 2rem;"
+                        onclick="confirmStartDraft()">Start 2026 NFL Draft</button>
+                    <button class="btn btn-secondary" style="font-size: 1.2rem; padding: 1rem 2rem;"
+                        onclick="cancelStartDraft()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div id="success-modal" class="modal hidden">
+            <div class="modal-content glass-effect scale-in" style="max-width: 600px;">
+                <h3 class="modal-title success">Draft Complete!</h3>
+                <p id="success-text" class="modal-desc"></p>
+                <div id="draft-class-summary"
+                    style="margin: 1.5rem 0; text-align: left; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px;">
+                    <h4
+                        style="color: var(--color-saints-gold); margin-bottom: 1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">
+                        Your 2026 Draft Class</h4>
+                    <ul id="draft-class-list" style="list-style: none; padding: 0; line-height: 1.8;">
+                        <!-- Drafted players will be injected here -->
+                    </ul>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="restartDraft()">Return to Start</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trade Up Rejection Modal -->
+        <div id="trade-up-modal" class="modal hidden">
+            <div class="modal-content glass-effect scale-in">
+                <h3 class="modal-title warning">Trade Rejected</h3>
+                <div class="modal-desc long-text">
+                    <p id="trade-up-text"></p>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="closeTradeUpModal()">わかりました</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trade Down Rejection Modal -->
+        <div id="trade-down-modal" class="modal hidden">
+            <div class="modal-content glass-effect scale-in">
+                <h3 class="modal-title warning">Trade Rejected</h3>
+                <div class="modal-desc long-text">
+                    <p id="trade-down-text"></p>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="closeTradeDownModal()">わかりました</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="messages.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
