@@ -486,6 +486,12 @@ body {
         font-size: 1.5rem;
     }
 
+    .modal-desc {
+        max-height: 50vh;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+    }
+
     .draft-room-layout {
         flex-direction: column;
         height: auto;
